@@ -126,6 +126,10 @@ prompt_pure_preprompt_render() {
 	# Set color for Git branch/dirty status and change color if dirty checking has been delayed.
 	local git_color=$prompt_pure_colors[git:branch]
 	local git_dirty_color=$prompt_pure_colors[git:dirty]
+
+	# Set color for branch name if char for dirty branch is detected (this will be empty if not dirty)
+	[[ "$prompt_pure_git_dirty" == "*" ]] && git_color=208
+
 	[[ -n ${prompt_pure_git_last_dirty_check_timestamp+x} ]] && git_color=$prompt_pure_colors[git:branch:cached]
 
 	# Initialize the preprompt array.
@@ -561,6 +565,8 @@ prompt_pure_async_callback() {
 			prompt_pure_vcs_info[top]=$info[top]
 			prompt_pure_vcs_info[action]=$info[action]
 
+			export CURRENT_BRANCH=$info[branch]
+
 			do_render=1
 			;;
 		prompt_pure_async_git_aliases)
@@ -715,7 +721,7 @@ prompt_pure_state_setup() {
 	[[ $UID -eq 0 ]] && username='%F{$prompt_pure_colors[user:root]}%n%f'"$hostname"
 
 	typeset -gA prompt_pure_state
-	prompt_pure_state[version]="1.20.4"
+	prompt_pure_state[version]="1.21.0"
 	prompt_pure_state+=(
 		username "$username"
 		prompt	 "${PURE_PROMPT_SYMBOL:-❯}"
